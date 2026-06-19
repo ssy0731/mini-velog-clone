@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from database import engine, Base, SessionLocal
 import models
@@ -34,9 +35,29 @@ def get_db():
 def read_root():
     return {"message": "FastAPI 서버가 실행 중입니다."}
 
+# 게시글 가져오기 (검색이랑 태그 기능까지 구현 완료)
 @app.get("/posts", response_model=list[schemas.PostResponse])
-def get_posts(db: Session = Depends(get_db)):
-    posts = db.query(models.Post).order_by(models.Post.id.desc()).all()
+def get_posts(
+    search: str | None = None,
+    tag: str | None = None,
+    db: Session = Depends(get_db)
+):
+    query = db.query(models.Post)
+
+    if search:
+        query = query.filter(
+            or_(
+                models.Post.title.contains(search),
+                models.Post.content.contains(search)
+            )
+        )
+    if tag:
+        query = query.filter(
+            models.Post.tags.contains(tag)
+        )
+    query = query.order_by(models.Post.id.desc())
+              
+    posts = query.all()
 
     return posts
 
