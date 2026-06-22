@@ -41,8 +41,8 @@ function PostEditPage() {
                 summary: summary.trim(),
                 tags: tags.trim(),
             }
-            const response = await handleSubmit(postId, postData)
-            navigate(`/posts/${response.data.postId}`)
+            const response = await updatePost(postId, postData)
+            navigate(`/posts/${response.data.id}`)
         } catch (error) {
             console.error(error)
             setError('게시글 수정에 실패했습니다.')
@@ -53,8 +53,45 @@ function PostEditPage() {
         <main>
             <h1>글 수정</h1>
             {error && <p>{error}</p>}
-            <form onSubmit="handleSubmit"></form>
-            // 여기부터 추가 작성
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor="title">제목</label>
+                    <input 
+                        id="title"
+                        value={title}
+                        onChange={(event) => setTitle(event.target.value)} 
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="summary">요약</label>
+                    <input
+                        id="summary"
+                        value={summary}
+                        onChange={(event) => setSummary(event.target.value)} 
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="tags">태그</label>
+                    <input 
+                        id="tags"
+                        value={tags}
+                        onChange={(event) => setTags(event.target.value)}
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="content">내용</label>
+                    <input 
+                        id="content"
+                        value={content}
+                        onChange={(event) => setContent(event.target.value)}
+                    />
+                </div>
+
+                <button type="submit">수정 완료</button>
+            </form> 
         </main>
     )
 }

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { getPosts } from '../api/PostApi'
+import { Link } from 'react-router'
 import PostList from '../components/PostList'
 import SearchBar from '../components/SearchBar'
-import { Link } from 'react-router'
+import TagFilter from '../components/TagFilter'
 
 function HomePage() {
   // 게시글 여러 개를 저장할 state
@@ -11,10 +12,10 @@ function HomePage() {
   // API 요청 실패 여부를 저장할 state
   const [error, setError] = useState('')
 
-  const fetchPosts = async (search = '') => {
+  const fetchPosts = async (search = '', tag = '') => {
     try {
       setError('')
-      const response = await getPosts(search)
+      const response = await getPosts(search, tag)
       setPosts(response.data)
     } catch (error) {
       console.error(error)
@@ -33,6 +34,9 @@ function HomePage() {
         새 글 작성
       </Link>
       <SearchBar onSearch={fetchPosts}/>
+      <TagFilter
+        onTagSearch={(tag) => fetchPosts('',tag)}
+      />
 
       {error && <p>{error}</p>}
 

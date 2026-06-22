@@ -5,15 +5,19 @@ import axios from 'axios'
 const BASE_URL = 'http://127.0.0.1:8000'
 
 // 게시글 목록을 요청하는 함수
-export const getPosts = (search = '') => {
-    // 검색어가 없으면 전체 목록 요청
-    if (!search) {
-        return axios.get(`${BASE_URL}/posts`)
-    }
+export const getPosts = (search = '', tag = '') => {
+    const params = new URLSearchParams()
 
-    const requestUrl = `${BASE_URL}/posts?search=${encodeURIComponent(search)}`
-    console.log('실제 요청 URL:', requestUrl)
-    return axios.get(requestUrl)
+    if (search.trim()) {
+        params.set('search', search.trim())
+    }
+    if (tag.trim()) {
+        params.set('tag', tag.trim())
+    }
+    const queryString = params.toString()
+    return axios.get(
+        `${BASE_URL}/posts${queryString ? `?${queryString}` : ''}`
+    )
 }
 
 // 게시글 상세 정보를 요청하는 함수
